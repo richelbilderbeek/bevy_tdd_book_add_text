@@ -1,129 +1,89 @@
-use crate::game_parameters::*;
 use bevy::prelude::*;
 
-#[derive(Component)]
-pub struct Player;
+//#[derive(Component)]
+//pub struct MyText;
 
-pub fn create_app(game_parameters: GameParameters) -> App {
+pub fn create_app(text: String) -> App {
     let mut app = App::new();
-    let add_player_fn = move |/* no mut? */ commands: Commands| {
-        add_player_with_sprite_at_pos_with_scale(
-            commands,
-            game_parameters.initial_player_position,
-            game_parameters.initial_player_scale,
-        );
-    };
-    app.add_systems(Startup, add_player_fn);
+    let add_text_fn = move |/* no mut? */ commands: Commands| add_text(commands, &text);
+    app.add_systems(Startup, add_text_fn);
+    //app.add_systems(Startup, add_text);
 
     // Do not do update, as this will disallow to do more steps
     // app.update(); //Don't!
     app
 }
 
-#[cfg(test)]
-fn add_player(mut commands: Commands) {
-    commands.spawn(Player);
-}
-
-fn add_player_with_sprite_at_pos_with_scale(
-    mut commands: Commands,
-    initial_player_position: Vec3,
-    initial_player_scale: Vec3,
-) {
+/*
+fn add_text(mut commands: Commands) {
     commands.spawn((
-        SpriteBundle {
-            transform: Transform {
-                translation: initial_player_position,
-                scale: initial_player_scale,
-                ..default()
-            },
+        Text2dBundle {
+            text: Text::from_section("Hard-coded", TextStyle { ..default() }),
             ..default()
         },
-        Player,
+        MyText,
+    ));
+}
+*/
+
+fn add_text(mut commands: Commands, str: &String) {
+    commands.spawn((
+        Text2dBundle {
+            text: Text::from_section(str, TextStyle { ..default() }),
+            ..default()
+        },
+        //MyText,
     ));
 }
 
 #[cfg(test)]
-fn count_n_players(app: &App) -> usize {
-    let mut n = 0;
-    for c in app.world().components().iter() {
-        // The complete name will be '[crate_name]::Player'
-        if c.name().contains("Player") {
-            n += 1;
-        }
-    }
-    n
+fn count_n_texts(app: &mut App) -> usize {
+    let mut query = app.world_mut().query::<&Text>();
+    return query.iter(app.world_mut()).len();
 }
 
+#[cfg(test)]
+fn get_text(app: &mut App) -> String {
+    let mut query = app.world_mut().query::<&Text>();
+    return query.single(app.world_mut()).sections[0].value.clone();
+}
+
+/*
 #[cfg(test)]
 fn get_player_coordinat(app: &mut App) -> Vec3 {
     let mut query = app.world_mut().query::<(&Transform, &Player)>();
     let (transform, _) = query.single(app.world());
     transform.translation
 }
-
-#[cfg(test)]
-fn get_player_scale(app: &mut App) -> Vec3 {
-    let mut query = app.world_mut().query::<(&Transform, &Player)>();
-    let (transform, _) = query.single(app.world());
-    transform.scale
-}
+*/
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_can_create_app() {
-        create_app(create_default_game_parameters());
-    }
-
-    #[test]
-    fn test_empty_app_has_no_players() {
-        let app = App::new();
-        assert_eq!(count_n_players(&app), 0);
-    }
-
-    #[test]
-    fn test_setup_player_adds_a_player() {
+    fn test_empty_app_has_text() {
         let mut app = App::new();
-        assert_eq!(count_n_players(&app), 0);
-        app.add_systems(Startup, add_player);
-        app.update();
-        assert_eq!(count_n_players(&app), 1);
+        assert_eq!(count_n_texts(&mut app), 0);
     }
 
     #[test]
-    fn test_create_app_has_a_player() {
-        let mut app = create_app(create_default_game_parameters());
-        app.update();
-        assert_eq!(count_n_players(&app), 1);
+    fn test_can_create_app_from_str() {
+        create_app(String::from("irrelevant"));
     }
 
     #[test]
-    fn test_player_is_at_origin() {
-        let mut app = create_app(create_default_game_parameters());
+    fn test_app_has_text() {
+        let mut app = create_app(String::from("irrelevant"));
         app.update();
-        assert_eq!(get_player_coordinat(&mut app), Vec3::new(0.0, 0.0, 0.0));
+        assert_eq!(count_n_texts(&mut app), 1);
     }
 
     #[test]
-    fn test_player_is_at_custom_place() {
-        let initial_coordinat = Vec3::new(1.2, 3.4, 5.6);
-        let mut game_parameters = create_default_game_parameters();
-        game_parameters.initial_player_position = initial_coordinat;
-        let mut app = create_app(game_parameters);
+    fn test_app_uses_text() {
+        let text = String::from("some random text");
+        let mut app = create_app(text.clone());
         app.update();
-        assert_eq!(get_player_coordinat(&mut app), initial_coordinat);
-    }
-
-    #[test]
-    fn test_player_has_a_custom_scale() {
-        let player_scale = Vec3::new(1.1, 2.2, 3.3);
-        let mut game_parameters = create_default_game_parameters();
-        game_parameters.initial_player_scale = player_scale;
-        let mut app = create_app(game_parameters);
-        app.update();
-        assert_eq!(get_player_scale(&mut app), player_scale);
+        assert_eq!(get_text(&mut app), text);
     }
 }
