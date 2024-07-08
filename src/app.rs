@@ -1,39 +1,20 @@
 use bevy::prelude::*;
 
-//#[derive(Component)]
-//pub struct MyText;
-
 pub fn create_app(text: String) -> App {
     let mut app = App::new();
     let add_text_fn = move |/* no mut? */ commands: Commands| add_text(commands, &text);
     app.add_systems(Startup, add_text_fn);
-    //app.add_systems(Startup, add_text);
 
     // Do not do update, as this will disallow to do more steps
     // app.update(); //Don't!
     app
 }
 
-/*
-fn add_text(mut commands: Commands) {
-    commands.spawn((
-        Text2dBundle {
-            text: Text::from_section("Hard-coded", TextStyle { ..default() }),
-            ..default()
-        },
-        MyText,
-    ));
-}
-*/
-
 fn add_text(mut commands: Commands, str: &String) {
-    commands.spawn((
-        Text2dBundle {
-            text: Text::from_section(str, TextStyle { ..default() }),
-            ..default()
-        },
-        //MyText,
-    ));
+    commands.spawn((Text2dBundle {
+        text: Text::from_section(str, TextStyle { ..default() }),
+        ..default()
+    },));
 }
 
 #[cfg(test)]
@@ -47,15 +28,6 @@ fn get_text(app: &mut App) -> String {
     let mut query = app.world_mut().query::<&Text>();
     return query.single(app.world_mut()).sections[0].value.clone();
 }
-
-/*
-#[cfg(test)]
-fn get_player_coordinat(app: &mut App) -> Vec3 {
-    let mut query = app.world_mut().query::<(&Transform, &Player)>();
-    let (transform, _) = query.single(app.world());
-    transform.translation
-}
-*/
 
 #[cfg(test)]
 mod tests {
