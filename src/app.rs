@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 pub fn create_app(text: String) -> App {
     let mut app = App::new();
-    let add_text_fn = move |/* no mut? */ commands: Commands| add_text(commands, &text);
+    let add_text_fn = move |commands: Commands| add_text(commands, &text);
     app.add_systems(Startup, add_text_fn);
 
     // Do not do update, as this will disallow to do more steps
