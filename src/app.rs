@@ -18,7 +18,7 @@ fn add_text(mut commands: Commands, str: &String) {
 #[cfg(test)]
 fn count_n_texts(app: &mut App) -> usize {
     let mut query = app.world_mut().query::<&Text>();
-    return query.iter(app.world_mut()).len();
+    return query.iter(app.world()).len();
 }
 
 #[cfg(test)]
