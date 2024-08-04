@@ -4,9 +4,7 @@ pub fn create_app(text: String) -> App {
     let mut app = App::new();
     let add_text_fn = move |commands: Commands| add_text(commands, &text);
     app.add_systems(Startup, add_text_fn);
-
-    // Do not do update, as this will disallow to do more steps
-    // app.update(); //Don't!
+    app.update();
     app
 }
 
@@ -36,6 +34,7 @@ mod tests {
     #[test]
     fn test_empty_app_has_text() {
         let mut app = App::new();
+        app.update();
         assert_eq!(count_n_texts(&mut app), 0);
     }
 
@@ -47,7 +46,6 @@ mod tests {
     #[test]
     fn test_app_has_text() {
         let mut app = create_app(String::from("irrelevant"));
-        app.update();
         assert_eq!(count_n_texts(&mut app), 1);
     }
 
@@ -55,7 +53,6 @@ mod tests {
     fn test_app_uses_text() {
         let text = String::from("some random text");
         let mut app = create_app(text.clone());
-        app.update();
         assert_eq!(get_text(&mut app), text);
     }
 }
