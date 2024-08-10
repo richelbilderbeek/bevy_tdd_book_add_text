@@ -3,10 +3,8 @@ name = "bevy_tdd_book_add_text"
 version = "0.1.0"
 edition = "2021"
 
-
 [dependencies]
 bevy = { version = "0.14.1" }
-partial_application = { version = "0.2.1" }
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]
