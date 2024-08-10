@@ -2,9 +2,13 @@ use bevy::prelude::*;
 
 pub fn create_app(text: String) -> App {
     let mut app = App::new();
+
     let add_text_fn = move |commands: Commands| add_text(commands, &text);
     app.add_systems(Startup, add_text_fn);
-    app.update();
+
+    // NO! Do not update!
+    // text will be invisible in main
+    //app.update();
     app
 }
 
@@ -46,6 +50,7 @@ mod tests {
     #[test]
     fn test_app_has_text() {
         let mut app = create_app(String::from("irrelevant"));
+        app.update();
         assert_eq!(count_n_texts(&mut app), 1);
     }
 
@@ -53,6 +58,7 @@ mod tests {
     fn test_app_uses_text() {
         let text = String::from("some random text");
         let mut app = create_app(text.clone());
+        app.update();
         assert_eq!(get_text(&mut app), text);
     }
 }
