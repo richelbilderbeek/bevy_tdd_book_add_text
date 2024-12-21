@@ -13,7 +13,7 @@ pub fn create_app(text: String) -> App {
 }
 
 fn add_text(mut commands: Commands, str: &String) {
-    commands.spawn(Text2dBundle {
+    commands.spawn(Text2d {
         text: Text::from_section(str, TextStyle { ..default() }),
         ..default()
     });
