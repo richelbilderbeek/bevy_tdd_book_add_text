@@ -13,21 +13,18 @@ pub fn create_app(text: String) -> App {
 }
 
 fn add_text(mut commands: Commands, str: &String) {
-    commands.spawn(Text2d {
-        text: Text::from_section(str, TextStyle { ..default() }),
-        ..default()
-    });
+    commands.spawn(Text2d::new(str));
 }
 
 #[cfg(test)]
 fn count_n_texts(app: &mut App) -> usize {
-    let mut query = app.world_mut().query::<&Text>();
+    let mut query = app.world_mut().query::<&Text2d>();
     return query.iter(app.world()).len();
 }
 
 #[cfg(test)]
 fn get_text(app: &mut App) -> String {
-    let mut query = app.world_mut().query::<&Text>();
+    let mut query = app.world_mut().query::<&Text2d>();
     return query.single(app.world_mut()).sections[0].value.clone();
 }
 
